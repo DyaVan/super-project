@@ -1,3 +1,5 @@
+import java.util.regex.Pattern
+
 group 'com.scripts'
 version '0.0-SNAPSHOT'
 
@@ -12,3 +14,129 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
+
+
+task calculateReleaseVersion{
+    doLast{
+        println "CALCULATING Release VERSION!!!!!!!!!!!"
+        println version
+    }
+}
+
+task calculateSnapshotVersion{
+    doLast{
+        println "CALCULATING Snapshot VERSION!!!!!!!!!!!"
+        println version
+    }
+}
+
+task gitTag(dependsOn: build){
+    doLast{
+        println gitTag.name
+    }
+}
+
+task upload(dependsOn: gitTag){
+    doLast{
+        println upload.name
+    }
+}
+
+upload.mustRunAfter calculateReleaseVersion
+upload.mustRunAfter calculateSnapshotVersion
+
+
+task uploadRelease (dependsOn: [calculateReleaseVersion, upload]){
+    doLast{
+        println uploadRelease.name
+    }
+}
+
+
+task uploadSnapshot (dependsOn: [calculateSnapshotVersion, upload]){
+    doLast{
+        println uploadRelease.name
+    }
+}
+
+
+
+
+
+
+//task getTags{
+//    ArrayList<String> branchTags
+//     def tags =  'git tag'.execute().inputStream.eachLine
+//             {itt ->
+//                 println (itt + "new line")
+//
+//             }
+//     def branch =  'git rev-parse --abbrev-ref HEAD'.execute().text
+//    println tags
+//    println branch
+
+//}
+//
+//task getBranch {
+//    def branch =  'git rev-parse --abbrev-ref HEAD'.execute().text
+//    def pattern = "(release|bugfix|feature)/((\\d+)\\.(\\d+)\\.*(\\d*))"
+//    def matcher = branch =~ pattern
+//    def tagMask = matcher[0][2]
+//
+//    def latestTag
+////    "git tag -l v$tagMask*".execute().inputStream.eachLine {
+////        tag ->
+////    }
+//
+//    Version v = new Version(matcher[0][3],matcher[0][4],matcher[0][5])
+//    println v.makeTagForNextVersion()
+//
+//
+//    Version v1 = new Version('2016','7','')
+//    Version v2 = new Version('2017','7','-1')
+//    Version v3 = new Version('2017','5','1')
+//    Version v4 = new Version('2017','5','1')
+//
+//    Version[] vs = [v1,v2,v3,v4]
+//    println vs.sort()
+//    println vs.sort()[0].makeTagForNextVersion()
+//
+//}
+//
+//class Version implements Comparable<Version>{
+//    def major, minor, build
+//
+//    Version(String major, String minor, String build) {
+//        this.major = Integer.parseInt(major)
+//        this.minor = Integer.parseInt(minor)
+//        this.build = build.length() > 0 ? Integer.parseInt(build) : 0
+//    }
+//
+//    def makeTagForNextVersion(){
+//        return "v$major.$minor.${build+1}"
+//    }
+//
+//    @Override
+//    String toString() {
+//        return "v$major.$minor.$build"
+//    }
+//
+//    @Override
+//    int compareTo(Version v) {
+//        def c1 = this.major.compareTo(v.major)
+//        if (c1 < 0) {
+//            return -1
+//        }
+//        if (c1 > 0) {
+//            return 1
+//        }
+//        def c2 = this.minor.compareTo(v.minor)
+//        if (c2 < 0) {
+//            return -1
+//        }
+//        if (c2 > 0) {
+//            return 1
+//        }
+//        return this.build.compareTo(v.build)
+//    }
+//}
